@@ -35,8 +35,6 @@ export function findType({ metadataKey, prototype, propertyKey }: FindTypeOption
   return reflectedType;
 }
 
-const IS_THUNK_REG = /.+=>[\w\d\s\t\n\r]*/;
-
 /**
  * Asserts that a value is a thunk value.
  *
@@ -48,5 +46,15 @@ export function isThunk(value: any): boolean {
     return false;
   }
 
-  return Boolean(IS_THUNK_REG.exec(value));
+  // thunk should not have a prototype
+  if (Object.getOwnPropertyDescriptor(value, 'prototype')) {
+    return false
+  }
+
+  // thunk should have 0/1 arguments
+  if (value.length > 1) {
+    return false
+  }
+  
+  return true;
 }
